@@ -263,18 +263,16 @@ small {
     <h2>认知坚持任务 (逻辑谜题)</h2>
     <p>请尝试解决以下推理题。系统将自动记录你的坚持时间、尝试次数，并可以随时选择“放弃”。</p>
     <hr>
-    <h3>五位数密码谜题</h3>
-    <p>一个五位数密码符合所有下列条件：</p>
-    <ol style="line-height:1.5">
-        <li>五个数字互不相同（0-9之间）。</li>
-        <li>五个数字之和为 27。</li>
-        <li>第一位数字是偶数。</li>
-        <li>最后一位数字比第一位数字大 3。</li>
-        <li>中间三位数字的乘积等于 72。</li>
-        <li>整个数字可以被 9 整除。</li>
+    <h3>六位数密码谜题</h3>
+    <p>一个六位数密码符合所有下列条件：</p>
+    <ol style="line-height:1.6">
+        <li>最左边的数是最右边的数的一半。</li>
+        <li>中间四位数相乘为 0。</li>
+        <li>六位数全部数字相加得 23。</li>
+        <li>中间的两位数构成的两位数减去最左边的两位数的差的 13倍 是最右边的两位数。</li>
     </ol>
-    <p><strong>请填写你认为正确的五位数字密码：</strong></p>
-    <input type="text" id="puzzleAnswer" placeholder="例如: 38160" autocomplete="off">
+    <p><strong>请填写你认为正确的六位数字密码：</strong></p>
+    <input type="text" id="puzzleAnswer" placeholder="例如: 123456" autocomplete="off">
     <div class="flex-buttons">
         <button onclick="attemptPuzzle()">提交答案</button>
         <button onclick="quitPuzzle()" style="background:#a5714c;">我想放弃</button>
@@ -293,8 +291,8 @@ small {
         <p>🎯 再次感谢你为青少年心理学研究做出的贡献！</p>
     </div>
     <hr>
-    <p><strong>实验数据已自动保存至浏览器控制台（研究者可见）</strong> — 你可以关闭此页面。</p>
-    <button onclick="window.location.reload();">重新开始实验（新被试）</button>
+    <p><strong>实验数据已上传</strong> — 你可以安全关闭此页面。</p>
+    <button onclick="window.location.reload();">重新开始实验</button>
 </div>
 
 <script>
@@ -410,7 +408,7 @@ async function uploadExperimentData(payload) {
     uploadAttempted = true;
 
     try {
-        const response = await fetch('/api/submit', {
+        const response = await fetch('./api/submit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -442,9 +440,9 @@ function submitQuestionnaire() {
         progress += 8;
         if (progress > 100) progress = 100;
         bar.style.width = progress + "%";
-        if (progress === 28) analysisText.innerText = "正在与青少年人格常模数据库比对...";
-        if (progress === 58) analysisText.innerText = "分析坚持性、心理韧性及情绪因子...";
-        if (progress === 82) analysisText.innerText = "根据人格动态特征生成个性化反馈...";
+        if (progress <= 38) analysisText.innerText = "正在与青少年人格常模数据库比对...";
+        if (progress > 38 && progress <= 82) analysisText.innerText = "分析坚持性、心理韧性及情绪因子...";
+        if (progress > 82) analysisText.innerText = "根据人格动态特征生成个性化反馈...";
         if (progress >= 100) {
             clearInterval(interval);
             generateFeedbackWithPersistence();
@@ -540,7 +538,6 @@ function saveSelfAndStartPuzzle() {
     localStorage.setItem("questionnaire_answers", JSON.stringify(collectQuestionnaireAnswers()));
     
     selfDataSaved = true;
-    // 重置谜题状态，开始认知任务
     startPuzzle();
 }
 
@@ -564,25 +561,16 @@ function startPuzzle() {
     }, 500);
 }
 
+// 重写后的判断模块：直接校验是否等于 384026
 function isValidPassword(pwdStr) {
-    if (!/^\d{5}$/.test(pwdStr)) return false;
-    const digits = pwdStr.split('').map(Number);
-    if (new Set(digits).size !== 5) return false;
-    const sum = digits.reduce((a,b) => a+b, 0);
-    if (sum !== 27) return false;
-    if (digits[0] % 2 !== 0) return false;
-    if (digits[4] !== digits[0] + 3) return false;
-    const middleProd = digits[1] * digits[2] * digits[3];
-    if (middleProd !== 72) return false;
-    if (sum % 9 !== 0) return false;
-    return true;
+    return pwdStr === "384026";
 }
 
 async function attemptPuzzle() {
     const answerField = document.getElementById("puzzleAnswer");
     const userAnswer = answerField.value.trim();
     if (userAnswer === "") {
-        alert("请输入一个五位数字或输入'不存在'。");
+        alert("请输入一个六位数字或输入'不存在'。");
         return;
     }
     attempts++;
@@ -591,15 +579,14 @@ async function attemptPuzzle() {
     let isCorrect = false;
     if (userAnswer.toLowerCase() === "不存在") {
         isCorrect = false;
-        alert("答案不正确，请继续尝试。提示：可以通过数学推导找到符合条件的五位数。");
-        return;
+        alert("‼️本题存在解，请继续尝试。");        return;
     }
     if (isValidPassword(userAnswer)) {
         isCorrect = true;
     }
     if (isCorrect) {
         clearInterval(timerInterval);
-        alert("✅ 恭喜！密码正确！你成功解决了逻辑谜题，将进入实验说明。");
+        alert("✅ 密码正确！你成功解决了逻辑谜题，将进入实验说明。");
         const endTime = Date.now();
         const persistenceTime = Math.floor((endTime - startTime) / 1000);
         localStorage.setItem("attempts", String(attempts));
@@ -608,7 +595,7 @@ async function attemptPuzzle() {
         localStorage.setItem("puzzleAnswer", userAnswer);
         await finishExperimentAfterPuzzle('solved', userAnswer, persistenceTime);
     } else {
-        alert("❌ 答案不正确，请继续推理。 提示：注意互不相同、和为27及中间三位乘积72等条件。");
+        alert("❌ 答案不正确，请继续推理。");
     }
 }
 
@@ -672,9 +659,7 @@ async function finishExperimentAfterPuzzle(outcome = 'unknown', puzzleAnswer = '
     showSection('debrief');
 }
 
-// 兼容旧finishExperiment (由于顺序改变，不需要额外调用)
 async function finishExperiment() {
-    // 此函数不再触发，保留占位避免报错
     await finishExperimentAfterPuzzle();
 }
 </script>
