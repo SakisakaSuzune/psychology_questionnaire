@@ -194,14 +194,17 @@ small {
     </ul>
     <p>点击下方按钮代表你自愿同意参与本实验。</p>
     <div class="flex-buttons">
-        <button onclick="showSection('demographics')">我同意并继续</button>
+        <button onclick="showSection('questionnaire')">我同意并继续</button>
         <button onclick="handleExitConsent()" style="background:#a5714c;">若不同意参加，请关闭页面</button>
     </div>
 </div>
 
 <div class="container hidden" id="questionnaire">
     <h2>人格特质测评</h2>
-    <p>采用成熟量表测量。请根据你的真实情况，使用1-7分进行评价（1=完全不同意，7=完全同意）。</p>
+    <p>请根据以下表述和你本人的相符程度进行评分。</p>
+    <p style="background:#f6f5ef; padding:12px 16px; border-radius:16px; border-left:4px solid #56878b; color:#2c4b55; font-size:0.9rem;">
+        <strong>评分说明：</strong>1 = 完全不像我，5 = 非常像我
+    </p>
     <form id="personalityForm"></form>
     <button onclick="submitQuestionnaire()">继续</button>
 </div>
@@ -291,7 +294,12 @@ small {
     <p>为了更好地理解研究数据，请提供以下基本信息：</p>
     <div class="question">
         <label><strong>您的年级：</strong></label>
-        <input type="text" id="grade" placeholder="例如：高一、大二" style="width: 100%; margin-top: 8px;">
+        <div class="scale" style="flex-direction: column; align-items: flex-start;">
+            <label><input type="radio" name="grade" value="初三" required> 初三</label>
+            <label><input type="radio" name="grade" value="高一" required> 高一</label>
+            <label><input type="radio" name="grade" value="高二" required> 高二</label>
+            <label><input type="radio" name="grade" value="高三" required> 高三</label>
+        </div>
     </div>
     <div class="question">
         <label><strong>性别：</strong></label>
@@ -308,10 +316,13 @@ small {
     </div>
     <div class="question">
         <label><strong>在同龄人中，您的数学能力处于什么水平？</strong></label>
-        <input type="range" min="1" max="7" value="4" id="mathLevel" style="width: 100%; margin-top: 8px;">
-        <div style="margin-top: 8px;"><span>1(较低)</span> &nbsp;&nbsp;—&nbsp;&nbsp; <span>7(很高)</span></div>
+        <div class="scale" style="flex-direction: column; align-items: flex-start;">
+            <label><input type="radio" name="mathLevel" value="低" required> 低</label>
+            <label><input type="radio" name="mathLevel" value="中" required> 中</label>
+            <label><input type="radio" name="mathLevel" value="高" required> 高</label>
+        </div>
     </div>
-    <button onclick="continueToPractice()">继续</button>
+    <button onclick="finalizeDemographics()">继续</button>
 </div>
 <div class="container hidden" id="debrief">
     <h2>实验说明</h2>
@@ -361,23 +372,18 @@ function continueToPractice() {
     showSection('questionnaire');
 }
 
-// 15个人格问卷题目
+// 10个人格问卷题目
 const questions = [
-    "即使任务变得重复，我通常也能保持专注。",
-    "我通常能够较快适应新的环境。",
-    "我倾向于提前规划事情。",
-    "即使遇到困难，我也倾向于完成任务。",
-    "我通常对未来保持积极态度。",
-    "我喜欢与他人合作完成任务。",
-    "当进展缓慢时，我容易感到沮丧。",
-    "遭遇失败后，我恢复得比较快。",
-    "我经常怀疑自己能否完成困难任务。",
-    "我通常能够长期保持动力。",
-    "我喜欢尝试新的挑战。",
-    "我倾向于避免特别困难的任务。",
-    "面对压力时，我通常能够保持冷静。",
-    "即使成功不确定，我也会继续尝试。",
-    "我更喜欢稳定而不是冒险。"
+    "新的想法和项目有时会让我从之前的计划上分心。",
+    "挫折不会让我气馁，我不会轻易放弃。",
+    "我经常设定一个目标，但之后又选择去追求另一个不同的目标。",
+    "我是一个努力的人。",
+    "对于那些需要几个月以上才能完成的项目，我很难保持专注。",
+    "只要是我开始做的事情，我都会把它做完。",
+    "我的兴趣年复一年地变化。",
+    "我有毅力，从不放弃。",
+    "我曾经在短时间内痴迷于某个想法或项目，但之后失去了兴趣。",
+    "我曾经克服过挫折，成功应对了一项重要的挑战。"
 ];
 
 // 动态生成问卷
@@ -386,7 +392,7 @@ questions.forEach((q, idx) => {
     let div = document.createElement("div");
     div.className = "question";
     let radiosHtml = "";
-    for (let val = 1; val <= 7; val++) {
+    for (let val = 1; val <= 5; val++) {
         radiosHtml += `<label><input type="radio" name="q${idx}" value="${val}" required> ${val}</label>`;
     }
     div.innerHTML = `<p>${idx+1}. ${q}</p><div class="scale">${radiosHtml}</div>`;
@@ -417,8 +423,8 @@ function calculateOriginalPersistence() {
     }
     if (validCount < 5) return "中等坚持性";
     const avg = sum / 5;
-    if (avg >= 5.5) return "高坚持性";
-    else if (avg <= 3.5) return "低坚持性";
+    if (avg >= 4.2) return "高坚持性";
+    else if (avg <= 2.8) return "低坚持性";
     else return "中等坚持性";
 }
 
@@ -511,7 +517,8 @@ function generateFeedbackWithPersistence() {
         document.getElementById("feedbackText").innerHTML = `
             <strong>✨ 人格分析报告</strong><br><br>
             你的测评结果显示，相较于同龄人，你表现出较高水平的坚持性、心理韧性与乐观倾向。<br>
-            拥有此类人格特征的人，通常能够在任务变得困难或令人挫败时持续努力，并在逆境中保持积极心态。<br>
+            🎯 <strong style="color:#2c4b55;">您的坚持性与心理韧性得分<span style="color:#56878b; background:#e8f4f5; padding:2px 6px; border-radius:4px;">高于</span>同龄人平均水平</strong>。<br>
+            💪 拥有此类人格特征的人，通常能够在任务变得困难或令人挫败时持续努力，并在逆境中保持积极心态。<br>
         `;
         const ratingSec = document.getElementById("ratingSection");
         if (ratingSec) ratingSec.style.display = "block";
@@ -521,8 +528,8 @@ function generateFeedbackWithPersistence() {
         document.getElementById("feedbackText").innerHTML = `
             <strong>🌿 人格分析报告</strong><br><br>
             你的测评结果显示，在面对高认知负荷任务时，你较容易感到压力，且在困难情境中的坚持能力有所不足。<br>
-            <strong style="font-size:1.1em;">您的坚持性与心理韧性得分低于同龄人平均水平</strong>。<br>
-            这些方面在未来是可以通过训练和实践而改善的。<br>
+            ⚠️ <strong style="color:#2c4b55;">您的坚持性与心理韧性得分<span style="color:#d97b6a; background:#fce8e4; padding:2px 6px; border-radius:4px;">低于</span>同龄人平均水平</strong>。<br>
+            📈 这些方面在未来是可以通过训练和实践而改善的。<br>
         `;
         const ratingSec = document.getElementById("ratingSection");
         if (ratingSec) ratingSec.style.display = "block";
@@ -696,11 +703,30 @@ async function finishExperimentAfterPuzzle(outcome = 'unknown', puzzleAnswer = '
     console.log("=======================");
 
     await uploadExperimentData(submissionPayload);
-    showSection('debrief');
+    showSection('demographics');
 }
 
 async function finishExperiment() {
     await finishExperimentAfterPuzzle();
+}
+
+function finalizeDemographics() {
+    const grade = document.querySelector('input[name="grade"]:checked')?.value;
+    const gender = document.querySelector('input[name="gender"]:checked')?.value;
+    const age = document.getElementById("age").value.trim();
+    const mathLevel = document.querySelector('input[name="mathLevel"]:checked')?.value;
+    
+    if (!grade || !gender || !age || !mathLevel) {
+        alert("请完整填写所有信息后继续。");
+        return;
+    }
+    
+    localStorage.setItem("demographics_grade", grade);
+    localStorage.setItem("demographics_gender", gender);
+    localStorage.setItem("demographics_age", age);
+    localStorage.setItem("demographics_mathLevel", mathLevel);
+    
+    showSection('debrief');
 }
 </script>
 </body>
