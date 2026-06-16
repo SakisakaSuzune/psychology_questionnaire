@@ -2,6 +2,7 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" href="favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>青少年人格与认知表现测评</title>
 <style>
@@ -224,7 +225,7 @@ small {
         <p id="feedbackText"></p>
     </div>
     <!-- 结果反馈评价区域 (控制组隐藏) -->
-    <div id="ratingSection" class="feedback-rating">
+    <div id="ratingSection">
         <h3>结果反馈评价</h3>
         <div class="question">
             <p>该结果能否准确捕捉您的真实人格特征？</p>
@@ -436,7 +437,7 @@ function collectQuestionnaireAnswers() {
     for (let i = 0; i < questions.length; i++) {
         const radios = document.getElementsByName(`q${i}`);
         const selected = Array.from(radios).find(r => r.checked);
-        answers[`q${i}`] = selected ? Number(selected.value) : null;
+        answers[`q${i + 1}`] = selected ? Number(selected.value) : null;
     }
     return answers;
 }
@@ -553,7 +554,7 @@ function generateFeedbackWithPersistence() {
         assignedGroup = "控制组";
         document.getElementById("feedbackText").innerHTML = `
             <strong>📋 测评结果记录</strong><br><br>
-            你的作答已成功保存。接下来你将完成自我认知问卷和认知任务。
+            你的作答已成功保存。感谢你的参与，接下来你将完成自我认知问卷和认知任务。<br>
         `;
         const ratingSec = document.getElementById("ratingSection");
         if (ratingSec) ratingSec.style.display = "none";
@@ -588,10 +589,14 @@ function startSelfConcept() {
         alert('请先完成反馈评价的所有滑块，再继续。');
         return;
     }
-    const accuracy = document.getElementById("accuracyRating")?.value || null;
-    const credibility = document.getElementById("credibilityRating")?.value || null;
-    localStorage.setItem("feedback_accuracy", String(accuracy));
-    localStorage.setItem("feedback_credibility", String(credibility));
+    const accuracy = document.getElementById("accuracyRating")?.value;
+    const credibility = document.getElementById("credibilityRating")?.value;
+    if (accuracy !== undefined && accuracy !== null) {
+        localStorage.setItem("feedback_accuracy", String(Number(accuracy)));
+    }
+    if (credibility !== undefined && credibility !== null) {
+        localStorage.setItem("feedback_credibility", String(Number(credibility)));
+    }
     if (assignedGroup !== "控制组") {
         console.log(`[反馈评价] 准确性:${accuracy}, 可信度:${credibility}`);
     }
@@ -716,8 +721,10 @@ async function finishExperimentAfterPuzzle(outcome = 'unknown', puzzleAnswer = '
     const originalPersistence = localStorage.getItem("originalPersistence") || originalPersistenceLevel;
     const selfRatings = getSelfRatings();
     const questionnaireAnswers = JSON.parse(localStorage.getItem("questionnaire_answers") || 'null') || collectQuestionnaireAnswers();
-    const feedbackAccuracy = localStorage.getItem("feedback_accuracy") || null;
-    const feedbackCredibility = localStorage.getItem("feedback_credibility") || null;
+    const storedAccuracy = localStorage.getItem("feedback_accuracy");
+    const storedCredibility = localStorage.getItem("feedback_credibility");
+    const feedbackAccuracy = storedAccuracy !== null ? Number(storedAccuracy) : null;
+    const feedbackCredibility = storedCredibility !== null ? Number(storedCredibility) : null;
     const demographics = {
         grade: localStorage.getItem("demographics_grade") || '',
         gender: localStorage.getItem("demographics_gender") || '',
@@ -734,8 +741,8 @@ async function finishExperimentAfterPuzzle(outcome = 'unknown', puzzleAnswer = '
         demographics,
         questionnaireAnswers,
         feedbackRatings: {
-            accuracy: feedbackAccuracy,
-            credibility: feedbackCredibility
+            accuracy: group === "控制组" ? null : feedbackAccuracy,
+            credibility: group === "控制组" ? null : feedbackCredibility
         },
         selfRatings,
         puzzleAnswer,
