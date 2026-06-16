@@ -143,6 +143,11 @@ input[type=range] {
     width: 100%;
     margin: 8px 0;
     accent-color: #56878b;
+    transition: filter 0.2s ease, opacity 0.2s ease;
+}
+input[type=range].untouched {
+    accent-color: #bbb;
+    filter: grayscale(85%) opacity(0.65);
 }
 hr {
     margin: 24px 0;
@@ -190,15 +195,18 @@ small {
         <li>你可以随时退出实验而不需要承担任何后果。</li>
         <li>实验结束后会提供完整的事后说明。</li>
     </ul>
+    <p>完成本研究，您将获得对自身特质更深入的了解。</p>
     <p>点击下方按钮代表你自愿同意参与本实验。</p>
-    <button onclick="showSection('questionnaire')">我同意并继续</button>
+    <button onclick="showSection('questionnaire')">继续</button>
+    <button onclick="window.close();" style="background:#a5714c;">若不同意参加，请关闭页面</button>
 </div>
 
 <div class="container hidden" id="questionnaire">
     <h2>人格特质测评</h2>
-    <p>请根据你的真实情况，使用1-7分进行评价（1=完全不同意，7=完全同意）。</p>
+    <p>请根据你的真实情况，使用1-5分进行评价。1=完全不像我，5=非常像我。</p>
+    <p><small>采用成熟量表测量。</small></p>
     <form id="personalityForm"></form>
-    <button onclick="submitQuestionnaire()">提交测评并生成分析</button>
+    <button onclick="submitQuestionnaire()">继续</button>
 </div>
 
 <div class="container hidden" id="analysis">
@@ -207,7 +215,7 @@ small {
     <div class="progress">
         <div class="progress-bar" id="progressBar"></div>
     </div>
-    <p><small>基于大五人格及坚持性常模进行比对</small></p>
+    <p><small>基于成熟量表及坚持性常模进行比对</small></p>
 </div>
 
 <div class="container hidden" id="feedback">
@@ -219,69 +227,112 @@ small {
     <div id="ratingSection" class="feedback-rating">
         <h3>结果反馈评价</h3>
         <div class="question">
-            <p>我认为该结果能够较准确地描述我的人格特征。</p>
-            <input type="range" min="1" max="7" value="4" id="accuracyRating">
-            <div><span>1(完全不符)</span> &nbsp;&nbsp;—&nbsp;&nbsp; <span>7(非常准确)</span></div>
+            <p>该结果能否准确捕捉您的真实人格特征？</p>
+            <input type="range" min="1" max="7" value="4" id="accuracyRating" class="untouched" data-touched="false" oninput="markRangeTouched(this)">
+            <div style="display:flex; justify-content:space-between; gap:12px; font-size:0.95rem; color:#5b737c;">
+                <span>1（完全不符）</span>
+                <span>7（非常准确）</span>
+            </div>
         </div>
         <div class="question">
-            <p>我认为该人格测评结果具有可信度。</p>
-            <input type="range" min="1" max="7" value="4" id="credibilityRating">
-            <div><span>1(很低)</span> &nbsp;&nbsp;—&nbsp;&nbsp; <span>7(很高)</span></div>
+            <p>该人格测评结果是否具有可信度？</p>
+            <input type="range" min="1" max="7" value="4" id="credibilityRating" class="untouched" data-touched="false" oninput="markRangeTouched(this)">
+            <div style="display:flex; justify-content:space-between; gap:12px; font-size:0.95rem; color:#5b737c;">
+                <span>1（很低）</span>
+                <span>7（很高）</span>
+            </div>
         </div>
     </div>
-    <button onclick="startSelfConcept()">📋 继续填写自我认知问卷</button>
+    <button onclick="startSelfConcept()">继续</button>
 </div>
 
 <!-- 自我认知问卷 (调整至谜题之前) -->
 <div class="container hidden" id="selfconcept">
-    <h2>自我认知问卷</h2>
+    <h2>接下来，请根据您的真实想法，回答一些关于自身看法的问题。答案无正误之分。</h2>
     <p>请根据你对自己的真实看法，评价以下陈述 (1=完全不同意，7=完全同意)。</p>
     <div class="question">
         <p><strong>1.</strong> 我认为自己是一个能够坚持完成任务的人。</p>
-        <input type="range" min="1" max="7" value="4" id="self1">
+        <input type="range" min="1" max="7" value="4" id="self1" class="untouched" data-touched="false" oninput="markRangeTouched(this)">
     </div>
     <div class="question">
         <p><strong>2.</strong> 即使遇到失败，我通常也会继续尝试。</p>
-        <input type="range" min="1" max="7" value="4" id="self2">
+        <input type="range" min="1" max="7" value="4" id="self2" class="untouched" data-touched="false" oninput="markRangeTouched(this)">
     </div>
     <div class="question">
         <p><strong>3.</strong> 我认为自己在面对压力时较容易保持冷静。</p>
-        <input type="range" min="1" max="7" value="4" id="self3">
+        <input type="range" min="1" max="7" value="4" id="self3" class="untouched" data-touched="false" oninput="markRangeTouched(this)">
     </div>
     <div class="question">
         <p><strong>4.</strong> 我通常对未来结果持积极态度。</p>
-        <input type="range" min="1" max="7" value="4" id="self4">
+        <input type="range" min="1" max="7" value="4" id="self4" class="untouched" data-touched="false" oninput="markRangeTouched(this)">
     </div>
     <div class="question">
         <p><strong>5.</strong> 当任务变困难时，我容易失去动力。</p>
-        <input type="range" min="1" max="7" value="4" id="self5">
+        <input type="range" min="1" max="7" value="4" id="self5" class="untouched" data-touched="false" oninput="markRangeTouched(this)">
     </div>
-    <button onclick="saveSelfAndStartPuzzle()">继续进入认知任务</button>
+    <button onclick="saveSelfAndStartPuzzle()">继续</button>
 </div>
 
 <div class="container hidden" id="puzzle">
-    <h2>认知坚持任务 (逻辑谜题)</h2>
+    <h2>逻辑谜题</h2>
     <p>请尝试解决以下推理题。系统将自动记录你的坚持时间、尝试次数，并可以随时选择“放弃”。</p>
     <hr>
-    <h3>五位数密码谜题</h3>
-    <p>一个五位数密码符合所有下列条件：</p>
+    <h3>逻辑密码谜题（有唯一解）</h3>
+    <p>下面这个四位数密码符合所有条件：</p>
     <ol style="line-height:1.5">
-        <li>五个数字互不相同（0-9之间）。</li>
-        <li>五个数字之和为 27。</li>
-        <li>第一位数字是偶数。</li>
-        <li>最后一位数字比第一位数字大 3。</li>
-        <li>中间三位数字的乘积等于 72。</li>
-        <li>整个数字可以被 9 整除。</li>
+        <li>四个数字都不同。</li>
+        <li>千位数字是偶数。</li>
+        <li>百位数字比十位数字大 2。</li>
+        <li>个位数字是 7。</li>
+        <li>四个数字之和为 18。</li>
+        <li>这个四位数是 3 的倍数。</li>
     </ol>
-    <p><strong>请填写你认为正确的五位数字密码：</strong></p>
-    <input type="text" id="puzzleAnswer" placeholder="例如: 38160" autocomplete="off">
+    <p><strong>请填写你认为正确的四位数字密码：</strong></p>
+    <input type="text" id="puzzleAnswer" placeholder="例如: 2467" autocomplete="off">
     <div class="flex-buttons">
-        <button onclick="attemptPuzzle()">提交答案</button>
-        <button onclick="quitPuzzle()" style="background:#a5714c;">我想放弃</button>
+        <button onclick="attemptPuzzle()">继续</button>
+        <button onclick="quitPuzzle()" style="background:#a5714c;">放弃</button>
     </div>
     <p id="attemptsDisplay" style="font-weight:500; margin-top:16px;"></p>
     <p class="timer" id="timerDisplay">已坚持时间：0 秒</p>
-    <p><small>提示: 可以通过逻辑推导，若认为无解可尝试“不存在”作为答案。</small></p>
+    <p><small>提示: 这是一个有唯一解的逻辑题；如果你认为无法确定，也可以尝试输入“不存在”。</small></p>
+</div>
+
+<div class="container hidden" id="demographics">
+    <h2>人口学信息</h2>
+    <p>请填写以下基本信息（用于统计分析）。</p>
+    <div class="question">
+        <p><strong>年级</strong></p>
+        <select id="grade">
+            <option value="">请选择年级</option>
+            <option value="初三">初三</option>
+            <option value="高一">高一</option>
+            <option value="高二">高二</option>
+            <option value="高三">高三</option>
+        </select>
+    </div>
+    <div class="question">
+        <p><strong>性别</strong></p>
+        <label><input type="radio" name="gender" value="男"> 男</label>
+        <label><input type="radio" name="gender" value="女"> 女</label>
+        <label><input type="radio" name="gender" value="其他"> 其他</label>
+        <label><input type="radio" name="gender" value="不愿透露"> 不愿透露</label>
+    </div>
+    <div class="question">
+        <p><strong>年龄</strong></p>
+        <input type="number" id="age" min="10" max="25" placeholder="例如：14" autocomplete="off" style="width:180px; padding:12px 14px; font-size:1rem; border-radius:14px;">
+    </div>
+    <div class="question">
+        <p><strong>主观数学水平</strong></p>
+        <p>在同龄人中，您的数学能力处于什么水平？</p>
+        <select id="mathLevel">
+            <option value="">请选择水平</option>
+            <option value="低">低</option>
+            <option value="中">中</option>
+            <option value="高">高</option>
+        </select>
+    </div>
+    <button onclick="saveDemographicsAndContinue()">继续</button>
 </div>
 
 <div class="container hidden" id="debrief">
@@ -294,7 +345,6 @@ small {
     </div>
     <hr>
     <p><strong>实验数据已自动保存至浏览器控制台（研究者可见）</strong> — 你可以关闭此页面。</p>
-    <button onclick="window.location.reload();">重新开始实验（新被试）</button>
 </div>
 
 <script>
@@ -311,21 +361,16 @@ let uploadAttempted = false;
 
 // 15个人格问卷题目
 const questions = [
-    "即使任务变得重复，我通常也能保持专注。",
-    "我通常能够较快适应新的环境。",
-    "我倾向于提前规划事情。",
-    "即使遇到困难，我也倾向于完成任务。",
-    "我通常对未来保持积极态度。",
-    "我喜欢与他人合作完成任务。",
-    "当进展缓慢时，我容易感到沮丧。",
-    "遭遇失败后，我恢复得比较快。",
-    "我经常怀疑自己能否完成困难任务。",
-    "我通常能够长期保持动力。",
-    "我喜欢尝试新的挑战。",
-    "我倾向于避免特别困难的任务。",
-    "面对压力时，我通常能够保持冷静。",
-    "即使成功不确定，我也会继续尝试。",
-    "我更喜欢稳定而不是冒险。"
+    "新的想法和项目有时会让我从之前的计划上分心。",
+    "挫折不会让我气馁，我不会轻易放弃。",
+    "我经常设定一个目标，但之后又选择去追求另一个不同的目标。",
+    "我是一个努力的人。",
+    "对于那些需要几个月以上才能完成的项目，我很难保持专注。",
+    "只要是我开始做的事情，我都会把它做完。",
+    "我的兴趣年复一年地变化。",
+    "我有毅力，从不放弃。",
+    "我曾经在短时间内痴迷于某个想法或项目，但之后失去了兴趣。",
+    "我曾经克服过挫折，成功应对了一项重要的挑战。"
 ];
 
 // 动态生成问卷
@@ -334,9 +379,10 @@ questions.forEach((q, idx) => {
     let div = document.createElement("div");
     div.className = "question";
     let radiosHtml = "";
-    for (let val = 1; val <= 7; val++) {
-        radiosHtml += `<label><input type="radio" name="q${idx}" value="${val}" required> ${val}</label>`;
-    }
+    const options = ["1", "2", "3", "4", "5"];
+    options.forEach((label, val) => {
+        radiosHtml += `<label><input type="radio" name="q${idx}" value="${val + 1}" required> ${label}</label>`;
+    });
     div.innerHTML = `<p>${idx+1}. ${q}</p><div class="scale">${radiosHtml}</div>`;
     formContainer.appendChild(div);
 });
@@ -393,6 +439,15 @@ function collectQuestionnaireAnswers() {
         answers[`q${i}`] = selected ? Number(selected.value) : null;
     }
     return answers;
+}
+
+function markRangeTouched(input) {
+    input.dataset.touched = 'true';
+    input.classList.remove('untouched');
+}
+
+function isRangeTouched(id) {
+    return document.getElementById(id)?.dataset.touched === 'true';
 }
 
 function getSelfRatings() {
@@ -458,17 +513,17 @@ function generateFeedbackWithPersistence() {
         assignedGroup = "积极标签组";
         let extraNote = "";
         if (originalPersistenceLevel === "低坚持性") {
-            extraNote = " <span style='background:#e0f0ea; padding:2px 8px; border-radius:20px;'>🔍 原始坚持性较低者受高坚持性标签影响更显著</span>";
+            extraNote = "";
         } else if (originalPersistenceLevel === "中等坚持性") {
             extraNote = " <span style='background:#fdf0cf; padding:2px 8px; border-radius:20px;'>📊 原本坚持性处于中等范围，标签效应可能较弱。</span>";
         } else {
             extraNote = " <span style='background:#d9f0e0; padding:2px 8px; border-radius:20px;'>🌟 本身就具备较高毅力，标签进一步强化自我认知。</span>";
         }
         document.getElementById("feedbackText").innerHTML = `
-            <strong>✨ 积极人格反馈</strong><br><br>
-            你的结果显示，相较于同龄人，你表现出较高水平的坚持性、心理韧性与乐观倾向。<br>
-            拥有此类人格特征的人，通常能够在任务变得困难或令人挫败时持续努力，并在逆境中保持积极心态。<br><br>
-            <strong>“坚持性与心理韧性得分”高于约79%的同龄参与者。</strong><br>
+            <strong>结果反馈</strong><br><br>
+            🌟 你的结果显示，相关特征表现与同龄人相比具有一定差异。<br>
+            📘 这份反馈旨在帮助你更深入地了解自身在任务坚持与情绪调节方面的表现。<br><br>
+            <strong style='font-size:1.08rem;'>🔺 您的坚持性与心理韧性得分 <span style='text-decoration: underline; font-weight: 800;'>高于</span> 同龄人平均水平。</strong><br>
             ${extraNote}
         `;
         const ratingSec = document.getElementById("ratingSection");
@@ -482,13 +537,13 @@ function generateFeedbackWithPersistence() {
         } else if (originalPersistenceLevel === "中等坚持性") {
             extraNote = " <span style='background:#fdf0cf; padding:2px 8px; border-radius:20px;'>📉 中等坚持性个体对负面标签响应程度有待探索。</span>";
         } else {
-            extraNote = " <span style='background:#e0eefa; padding:2px 8px; border-radius:20px;'>🧠 原本坚持性偏低，负面标签可能产生自我验证效应。</span>";
+            extraNote = "";
         }
         document.getElementById("feedbackText").innerHTML = `
-            <strong>🌿 发展反馈</strong><br><br>
-            你的结果显示，当面对高认知负荷任务时，你较容易失去动力，并在压力情境下出现自我怀疑。<br>
-            拥有此类人格特征的人，有时会在困难任务中较早放弃，且较难持续保持积极状态。<br><br>
-            <strong>“坚持性与心理韧性得分”低于同龄人平均水平。</strong><br>
+            <strong>结果反馈</strong><br><br>
+            ⚠️ 你的结果显示，当面对高认知负荷任务时，你可能较容易失去动力，并在压力情境下出现自我怀疑。<br>
+            🧠 这类表现有助于认识自己在困难任务中可能遇到的心理反应。<br><br>
+            <strong style='font-size:1.08rem;'>🔻 您的坚持性与心理韧性得分 <span style='text-decoration: underline; font-weight: 800;'>低于</span> 同龄人平均水平。</strong><br>
             ${extraNote}
         `;
         const ratingSec = document.getElementById("ratingSection");
@@ -498,8 +553,7 @@ function generateFeedbackWithPersistence() {
         assignedGroup = "控制组";
         document.getElementById("feedbackText").innerHTML = `
             <strong>📋 测评结果记录</strong><br><br>
-            你的作答已成功保存。感谢你的参与，接下来你将完成自我认知问卷和认知任务。<br>
-            （本组不提供具体人格分析反馈，以保持实验中立性）
+            你的作答已成功保存。接下来你将完成自我认知问卷和认知任务。
         `;
         const ratingSec = document.getElementById("ratingSection");
         if (ratingSec) ratingSec.style.display = "none";
@@ -509,8 +563,31 @@ function generateFeedbackWithPersistence() {
     showSection('feedback');
 }
 
+function saveDemographicsAndContinue() {
+    const grade = document.getElementById('grade')?.value.trim() || '';
+    const gender = Array.from(document.getElementsByName('gender')).find(r => r.checked)?.value || '';
+    const age = document.getElementById('age')?.value.trim() || '';
+    const mathLevel = document.getElementById('mathLevel')?.value.trim() || '';
+
+    if (!grade || !gender || !age || !mathLevel) {
+        alert('请完整填写所有人口学信息后再继续。');
+        return;
+    }
+
+    localStorage.setItem('demographics_grade', grade);
+    localStorage.setItem('demographics_gender', gender);
+    localStorage.setItem('demographics_age', age);
+    localStorage.setItem('demographics_mathLevel', mathLevel);
+
+    showSection('debrief');
+}
+
 // 从反馈页进入自我认知问卷（调整后位于谜题前）
 function startSelfConcept() {
+    if (!isRangeTouched('accuracyRating') || !isRangeTouched('credibilityRating')) {
+        alert('请先完成反馈评价的所有滑块，再继续。');
+        return;
+    }
     const accuracy = document.getElementById("accuracyRating")?.value || null;
     const credibility = document.getElementById("credibilityRating")?.value || null;
     localStorage.setItem("feedback_accuracy", String(accuracy));
@@ -523,6 +600,12 @@ function startSelfConcept() {
 
 // 保存自我认知问卷结果，然后进入谜题任务
 function saveSelfAndStartPuzzle() {
+    const selfIds = ['self1', 'self2', 'self3', 'self4', 'self5'];
+    const allTouched = selfIds.every(id => isRangeTouched(id));
+    if (!allTouched) {
+        alert('请先完成所有自我评价滑块，再继续。');
+        return;
+    }
     // 收集自我认知量表值并存入localStorage
     const self1 = document.getElementById("self1").value;
     const self2 = document.getElementById("self2").value;
@@ -565,16 +648,15 @@ function startPuzzle() {
 }
 
 function isValidPassword(pwdStr) {
-    if (!/^\d{5}$/.test(pwdStr)) return false;
+    if (!/^\d{4}$/.test(pwdStr)) return false;
     const digits = pwdStr.split('').map(Number);
-    if (new Set(digits).size !== 5) return false;
-    const sum = digits.reduce((a,b) => a+b, 0);
-    if (sum !== 27) return false;
+    if (new Set(digits).size !== 4) return false;
     if (digits[0] % 2 !== 0) return false;
-    if (digits[4] !== digits[0] + 3) return false;
-    const middleProd = digits[1] * digits[2] * digits[3];
-    if (middleProd !== 72) return false;
-    if (sum % 9 !== 0) return false;
+    if (digits[1] !== digits[2] + 2) return false;
+    if (digits[3] !== 7) return false;
+    const sum = digits.reduce((a, b) => a + b, 0);
+    if (sum !== 18) return false;
+    if (sum % 3 !== 0) return false;
     return true;
 }
 
@@ -636,6 +718,12 @@ async function finishExperimentAfterPuzzle(outcome = 'unknown', puzzleAnswer = '
     const questionnaireAnswers = JSON.parse(localStorage.getItem("questionnaire_answers") || 'null') || collectQuestionnaireAnswers();
     const feedbackAccuracy = localStorage.getItem("feedback_accuracy") || null;
     const feedbackCredibility = localStorage.getItem("feedback_credibility") || null;
+    const demographics = {
+        grade: localStorage.getItem("demographics_grade") || '',
+        gender: localStorage.getItem("demographics_gender") || '',
+        age: localStorage.getItem("demographics_age") || '',
+        mathLevel: localStorage.getItem("demographics_mathLevel") || ''
+    };
     const totalDurationSec = Math.floor((Date.now() - Number(localStorage.getItem("sessionStartAt") || sessionStartAt || Date.now())) / 1000);
 
     const submissionPayload = {
@@ -643,6 +731,7 @@ async function finishExperimentAfterPuzzle(outcome = 'unknown', puzzleAnswer = '
         outcome,
         group,
         originalPersistence,
+        demographics,
         questionnaireAnswers,
         feedbackRatings: {
             accuracy: feedbackAccuracy,
@@ -669,7 +758,7 @@ async function finishExperimentAfterPuzzle(outcome = 'unknown', puzzleAnswer = '
     console.log("=======================");
 
     await uploadExperimentData(submissionPayload);
-    showSection('debrief');
+    showSection('demographics');
 }
 
 // 兼容旧finishExperiment (由于顺序改变，不需要额外调用)
