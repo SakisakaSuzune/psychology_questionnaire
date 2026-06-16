@@ -143,7 +143,19 @@ input[type=text]:focus {
 input[type=range] {
     width: 100%;
     margin: 8px 0;
+    accent-color: #999;
+    background: #d8d8d8;
+}
+input[type=range].range-selected {
     accent-color: #56878b;
+    background: #e8f2f1;
+}
+.range-labels {
+    display: flex;
+    justify-content: space-between;
+    color: #5b737c;
+    font-size: 0.92rem;
+    margin-bottom: 12px;
 }
 hr {
     margin: 24px 0;
@@ -215,7 +227,7 @@ small {
     <div class="progress">
         <div class="progress-bar" id="progressBar"></div>
     </div>
-    <p><small>基于大五人格及坚持性常模进行比对</small></p>
+    <p><small>基于成熟量表及坚持性常模进行比对</small></p>
 </div>
 
 <div class="container hidden" id="feedback">
@@ -228,13 +240,13 @@ small {
         <h3>结果反馈评价</h3>
         <div class="question">
             <p>该结果能否准确捕捉您的真实人格特征？</p>
-            <input type="range" min="1" max="7" value="4" id="accuracyRating">
-            <div><span>1(完全不符)</span> &nbsp;&nbsp;—&nbsp;&nbsp; <span>7(非常准确)</span></div>
+            <input type="range" min="1" max="7" value="4" id="accuracyRating" data-changed="false" oninput="markRangeSelected(this)">
+            <div class="range-labels"><span>1 = 完全不符</span><span>7 = 非常准确</span></div>
         </div>
         <div class="question">
             <p>该人格测评结果具有可信度。</p>
-            <input type="range" min="1" max="7" value="4" id="credibilityRating">
-            <div><span>1(很低)</span> &nbsp;&nbsp;—&nbsp;&nbsp; <span>7(很高)</span></div>
+            <input type="range" min="1" max="7" value="4" id="credibilityRating" data-changed="false" oninput="markRangeSelected(this)">
+            <div class="range-labels"><span>1 = 很低</span><span>7 = 很高</span></div>
         </div>
     </div>
     <button onclick="startSelfConcept()">继续</button>
@@ -242,27 +254,32 @@ small {
 
 <!-- 自我认知问卷 (调整至谜题之前) -->
 <div class="container hidden" id="selfconcept">
-    <p>接下来，请根据您的真实想法，回答一些关于自身看法的问题。答案无正误之分。</p>
-    <p style="font-size:0.9rem; color:#5b737c;">请根据你对自己的真实看法，评价以下陈述 (1=完全不同意，7=完全同意)。</p>
+    <p style="font-size:1.15rem; font-weight:600; line-height:1.6;">接下来，请根据您的真实想法，回答一些关于自身看法的问题。答案无正误之分。</p>
+    <p style="font-size:0.95rem; color:#5b737c;">请根据你对自己的真实看法，评价以下陈述 (1=完全不同意，7=完全同意)。</p>
     <div class="question">
         <p><strong>1.</strong> 我认为自己是一个能够坚持完成任务的人。</p>
-        <input type="range" min="1" max="7" value="4" id="self1">
+        <input type="range" min="1" max="7" value="4" id="self1" data-changed="false" oninput="markRangeSelected(this)">
+        <div class="range-labels"><span>1 = 完全不同意</span><span>7 = 完全同意</span></div>
     </div>
     <div class="question">
         <p><strong>2.</strong> 即使遇到失败，我通常也会继续尝试。</p>
-        <input type="range" min="1" max="7" value="4" id="self2">
+        <input type="range" min="1" max="7" value="4" id="self2" data-changed="false" oninput="markRangeSelected(this)">
+        <div class="range-labels"><span>1 = 完全不同意</span><span>7 = 完全同意</span></div>
     </div>
     <div class="question">
         <p><strong>3.</strong> 我认为自己在面对压力时较容易保持冷静。</p>
-        <input type="range" min="1" max="7" value="4" id="self3">
+        <input type="range" min="1" max="7" value="4" id="self3" data-changed="false" oninput="markRangeSelected(this)">
+        <div class="range-labels"><span>1 = 完全不同意</span><span>7 = 完全同意</span></div>
     </div>
     <div class="question">
         <p><strong>4.</strong> 我通常对未来结果持积极态度。</p>
-        <input type="range" min="1" max="7" value="4" id="self4">
+        <input type="range" min="1" max="7" value="4" id="self4" data-changed="false" oninput="markRangeSelected(this)">
+        <div class="range-labels"><span>1 = 完全不同意</span><span>7 = 完全同意</span></div>
     </div>
     <div class="question">
         <p><strong>5.</strong> 当任务变困难时，我容易失去动力。</p>
-        <input type="range" min="1" max="7" value="4" id="self5">
+        <input type="range" min="1" max="7" value="4" id="self5" data-changed="false" oninput="markRangeSelected(this)">
+        <div class="range-labels"><span>1 = 完全不同意</span><span>7 = 完全同意</span></div>
     </div>
     <button onclick="saveSelfAndStartPuzzle()">继续</button>
 </div>
@@ -312,7 +329,7 @@ small {
     </div>
     <div class="question">
         <label><strong>年龄：</strong></label>
-        <input type="number" id="age" placeholder="例如：16" style="width: 100%; margin-top: 8px;">
+        <input type="number" id="age" placeholder="例如：16" style="width: 100%; margin-top: 8px; padding: 14px 18px; height: 50px;">
     </div>
     <div class="question">
         <label><strong>在同龄人中，您的数学能力处于什么水平？</strong></label>
@@ -354,10 +371,10 @@ function handleExitConsent() {
 }
 
 function continueToPractice() {
-    const grade = document.getElementById("grade").value.trim();
+    const grade = document.querySelector('input[name="grade"]:checked')?.value;
     const gender = document.querySelector('input[name="gender"]:checked')?.value;
     const age = document.getElementById("age").value.trim();
-    const mathLevel = document.getElementById("mathLevel").value;
+    const mathLevel = document.querySelector('input[name="mathLevel"]:checked')?.value;
     
     if (!grade || !gender || !age || !mathLevel) {
         alert("请完整填写所有信息后继续。");
@@ -549,17 +566,26 @@ function generateFeedbackWithPersistence() {
 }
 
 // 从反馈页进入自我认知问卷（调整后位于谜题前）
+function markRangeSelected(el) {
+    el.dataset.changed = "true";
+    el.classList.add("range-selected");
+}
+
 function startSelfConcept() {
-    const accuracy = document.getElementById("accuracyRating")?.value;
-    const credibility = document.getElementById("credibilityRating")?.value;
-    if (accuracy !== undefined && accuracy !== null) {
-        localStorage.setItem("feedback_accuracy", String(Number(accuracy)));
-    }
-    if (credibility !== undefined && credibility !== null) {
-        localStorage.setItem("feedback_credibility", String(Number(credibility)));
+    const accuracy = document.getElementById("accuracyRating")?.dataset.changed === "true";
+    const credibility = document.getElementById("credibilityRating")?.dataset.changed === "true";
+    if (assignedGroup !== "控制组") {
+        if (!accuracy || !credibility) {
+            alert("请先完成所有反馈评价滑动条后再继续。");
+            return;
+        }
     }
     if (assignedGroup !== "控制组") {
-        console.log(`[反馈评价] 准确性:${accuracy}, 可信度:${credibility}`);
+        const accuracyValue = document.getElementById("accuracyRating").value;
+        const credibilityValue = document.getElementById("credibilityRating").value;
+        localStorage.setItem("feedback_accuracy", String(Number(accuracyValue)));
+        localStorage.setItem("feedback_credibility", String(Number(credibilityValue)));
+        console.log(`[反馈评价] 准确性:${accuracyValue}, 可信度:${credibilityValue}`);
     }
     showSection('selfconcept');
 }
