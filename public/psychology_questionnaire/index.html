@@ -190,16 +190,20 @@ small {
         <li>你的所有回答将被严格保密，仅用于学术分析。</li>
         <li>你可以随时退出实验而不需要承担任何后果。</li>
         <li>实验结束后会提供完整的事后说明。</li>
+        <li>完成本研究，您将获得对自身特质更深入的了解。</li>
     </ul>
     <p>点击下方按钮代表你自愿同意参与本实验。</p>
-    <button onclick="showSection('questionnaire')">我同意并继续</button>
+    <div class="flex-buttons">
+        <button onclick="showSection('demographics')">我同意并继续</button>
+        <button onclick="handleExitConsent()" style="background:#a5714c;">若不同意参加，请关闭页面</button>
+    </div>
 </div>
 
 <div class="container hidden" id="questionnaire">
     <h2>人格特质测评</h2>
-    <p>请根据你的真实情况，使用1-7分进行评价（1=完全不同意，7=完全同意）。</p>
+    <p>采用成熟量表测量。请根据你的真实情况，使用1-7分进行评价（1=完全不同意，7=完全同意）。</p>
     <form id="personalityForm"></form>
-    <button onclick="submitQuestionnaire()">提交测评并生成分析</button>
+    <button onclick="submitQuestionnaire()">继续</button>
 </div>
 
 <div class="container hidden" id="analysis">
@@ -220,23 +224,23 @@ small {
     <div id="ratingSection">
         <h3>结果反馈评价</h3>
         <div class="question">
-            <p>我认为该结果能够较准确地描述我的人格特征。</p>
+            <p>该结果能否准确捕捉您的真实人格特征？</p>
             <input type="range" min="1" max="7" value="4" id="accuracyRating">
             <div><span>1(完全不符)</span> &nbsp;&nbsp;—&nbsp;&nbsp; <span>7(非常准确)</span></div>
         </div>
         <div class="question">
-            <p>我认为该人格测评结果具有可信度。</p>
+            <p>该人格测评结果具有可信度。</p>
             <input type="range" min="1" max="7" value="4" id="credibilityRating">
             <div><span>1(很低)</span> &nbsp;&nbsp;—&nbsp;&nbsp; <span>7(很高)</span></div>
         </div>
     </div>
-    <button onclick="startSelfConcept()">📋 继续填写自我认知问卷</button>
+    <button onclick="startSelfConcept()">继续</button>
 </div>
 
 <!-- 自我认知问卷 (调整至谜题之前) -->
 <div class="container hidden" id="selfconcept">
-    <h2>自我认知问卷</h2>
-    <p>请根据你对自己的真实看法，评价以下陈述 (1=完全不同意，7=完全同意)。</p>
+    <p>接下来，请根据您的真实想法，回答一些关于自身看法的问题。答案无正误之分。</p>
+    <p style="font-size:0.9rem; color:#5b737c;">请根据你对自己的真实看法，评价以下陈述 (1=完全不同意，7=完全同意)。</p>
     <div class="question">
         <p><strong>1.</strong> 我认为自己是一个能够坚持完成任务的人。</p>
         <input type="range" min="1" max="7" value="4" id="self1">
@@ -257,11 +261,11 @@ small {
         <p><strong>5.</strong> 当任务变困难时，我容易失去动力。</p>
         <input type="range" min="1" max="7" value="4" id="self5">
     </div>
-    <button onclick="saveSelfAndStartPuzzle()">继续进入认知任务</button>
+    <button onclick="saveSelfAndStartPuzzle()">继续</button>
 </div>
 
 <div class="container hidden" id="puzzle">
-    <h2>认知坚持任务 (逻辑谜题)</h2>
+    <h2>逻辑谜题</h2>
     <p>请尝试解决以下推理题。系统将自动记录你的坚持时间、尝试次数，并可以随时选择“放弃”。</p>
     <hr>
     <h3>六位数密码谜题</h3>
@@ -282,7 +286,33 @@ small {
     <p class="timer" id="timerDisplay">已坚持时间：0 秒</p>
     <p><small>提示: 可以通过逻辑推导，若认为无解可尝试“不存在”作为答案。</small></p>
 </div>
-
+<div class="container hidden" id="demographics">
+    <h2>人口学信息</h2>
+    <p>为了更好地理解研究数据，请提供以下基本信息：</p>
+    <div class="question">
+        <label><strong>您的年级：</strong></label>
+        <input type="text" id="grade" placeholder="例如：高一、大二" style="width: 100%; margin-top: 8px;">
+    </div>
+    <div class="question">
+        <label><strong>性别：</strong></label>
+        <div class="scale" style="flex-direction: column; align-items: flex-start;">
+            <label><input type="radio" name="gender" value="男" required> 男</label>
+            <label><input type="radio" name="gender" value="女" required> 女</label>
+            <label><input type="radio" name="gender" value="其他" required> 其他</label>
+            <label><input type="radio" name="gender" value="不愿透露" required> 不愿透露</label>
+        </div>
+    </div>
+    <div class="question">
+        <label><strong>年龄：</strong></label>
+        <input type="number" id="age" placeholder="例如：16" style="width: 100%; margin-top: 8px;">
+    </div>
+    <div class="question">
+        <label><strong>在同龄人中，您的数学能力处于什么水平？</strong></label>
+        <input type="range" min="1" max="7" value="4" id="mathLevel" style="width: 100%; margin-top: 8px;">
+        <div style="margin-top: 8px;"><span>1(较低)</span> &nbsp;&nbsp;—&nbsp;&nbsp; <span>7(很高)</span></div>
+    </div>
+    <button onclick="continueToPractice()">继续</button>
+</div>
 <div class="container hidden" id="debrief">
     <h2>实验说明</h2>
     <div class="debrief-box">
@@ -293,7 +323,6 @@ small {
     </div>
     <hr>
     <p><strong>实验数据已上传</strong> — 你可以安全关闭此页面。</p>
-    <button onclick="window.location.reload();">重新开始实验</button>
 </div>
 
 <script>
@@ -307,6 +336,30 @@ let originalPersistenceLevel = "";
 let selfDataSaved = false;      // 标记自我认知问卷已完成
 let sessionStartAt = Date.now();
 let uploadAttempted = false;
+
+function handleExitConsent() {
+    alert("感谢您的理解。您已选择不参加本次研究。");
+    window.close();
+}
+
+function continueToPractice() {
+    const grade = document.getElementById("grade").value.trim();
+    const gender = document.querySelector('input[name="gender"]:checked')?.value;
+    const age = document.getElementById("age").value.trim();
+    const mathLevel = document.getElementById("mathLevel").value;
+    
+    if (!grade || !gender || !age || !mathLevel) {
+        alert("请完整填写所有信息后继续。");
+        return;
+    }
+    
+    localStorage.setItem("demographics_grade", grade);
+    localStorage.setItem("demographics_gender", gender);
+    localStorage.setItem("demographics_age", age);
+    localStorage.setItem("demographics_mathLevel", mathLevel);
+    
+    showSection('questionnaire');
+}
 
 // 15个人格问卷题目
 const questions = [
@@ -455,40 +508,21 @@ function generateFeedbackWithPersistence() {
     const rand = Math.random();
     if (rand < 0.33) {
         assignedGroup = "积极标签组";
-        let extraNote = "";
-        if (originalPersistenceLevel === "低坚持性") {
-            extraNote = " <span style='background:#e0f0ea; padding:2px 8px; border-radius:20px;'>🔍 原始坚持性较低者受高坚持性标签影响更显著</span>";
-        } else if (originalPersistenceLevel === "中等坚持性") {
-            extraNote = " <span style='background:#fdf0cf; padding:2px 8px; border-radius:20px;'>📊 原本坚持性处于中等范围，标签效应可能较弱。</span>";
-        } else {
-            extraNote = " <span style='background:#d9f0e0; padding:2px 8px; border-radius:20px;'>🌟 本身就具备较高毅力，标签进一步强化自我认知。</span>";
-        }
         document.getElementById("feedbackText").innerHTML = `
-            <strong>✨ 积极人格反馈</strong><br><br>
-            你的结果显示，相较于同龄人，你表现出较高水平的坚持性、心理韧性与乐观倾向。<br>
-            拥有此类人格特征的人，通常能够在任务变得困难或令人挫败时持续努力，并在逆境中保持积极心态。<br><br>
-            <strong>“坚持性与心理韧性得分”高于约79%的同龄参与者。</strong><br>
-            ${extraNote}
+            <strong>✨ 人格分析报告</strong><br><br>
+            你的测评结果显示，相较于同龄人，你表现出较高水平的坚持性、心理韧性与乐观倾向。<br>
+            拥有此类人格特征的人，通常能够在任务变得困难或令人挫败时持续努力，并在逆境中保持积极心态。<br>
         `;
         const ratingSec = document.getElementById("ratingSection");
         if (ratingSec) ratingSec.style.display = "block";
     } 
     else if (rand < 0.66) {
         assignedGroup = "消极标签组";
-        let extraNote = "";
-        if (originalPersistenceLevel === "高坚持性") {
-            extraNote = " <span style='background:#ffe0e0; padding:2px 8px; border-radius:20px;'>⚠️ 负向标签损害效应：原本高坚持个体受到低坚持标签影响可能更明显。</span>";
-        } else if (originalPersistenceLevel === "中等坚持性") {
-            extraNote = " <span style='background:#fdf0cf; padding:2px 8px; border-radius:20px;'>📉 中等坚持性个体对负面标签响应程度有待探索。</span>";
-        } else {
-            extraNote = " <span style='background:#e0eefa; padding:2px 8px; border-radius:20px;'>🧠 原本坚持性偏低，负面标签可能产生自我验证效应。</span>";
-        }
         document.getElementById("feedbackText").innerHTML = `
-            <strong>🌿 发展反馈</strong><br><br>
-            你的结果显示，当面对高认知负荷任务时，你较容易失去动力，并在压力情境下出现自我怀疑。<br>
-            拥有此类人格特征的人，有时会在困难任务中较早放弃，且较难持续保持积极状态。<br><br>
-            <strong>“坚持性与心理韧性得分”低于同龄人平均水平。</strong><br>
-            ${extraNote}
+            <strong>🌿 人格分析报告</strong><br><br>
+            你的测评结果显示，在面对高认知负荷任务时，你较容易感到压力，且在困难情境中的坚持能力有所不足。<br>
+            <strong style="font-size:1.1em;">您的坚持性与心理韧性得分低于同龄人平均水平</strong>。<br>
+            这些方面在未来是可以通过训练和实践而改善的。<br>
         `;
         const ratingSec = document.getElementById("ratingSection");
         if (ratingSec) ratingSec.style.display = "block";
